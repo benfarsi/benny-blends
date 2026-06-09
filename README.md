@@ -2,8 +2,6 @@
 
 Barbershop website — precision cuts, clean fades, sharp lines.
 
-Black & silver aesthetic, chrome metallic logo, one-click booking that emails appointment requests.
-
 **Instagram:** [@bennyyblendss](https://instagram.com/bennyyblendss)
 
 ## Run
