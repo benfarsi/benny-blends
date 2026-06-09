@@ -1,0 +1,861 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Benny Blends</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+        :root {
+            --black:  #080808;
+            --silver: #C8C8C8;
+            --silver-light: #E8E8E8;
+            --silver-mid: #A0A0A0;
+            --silver-dark: #686868;
+            --white: #FFFFFF;
+        }
+
+        html { scroll-behavior: smooth; }
+
+        body {
+            background: var(--black);
+            color: var(--white);
+            font-family: 'Inter', sans-serif;
+            overflow-x: hidden;
+        }
+
+        /* ─── NAV ─── */
+        nav {
+            position: fixed;
+            inset: 0 0 auto 0;
+            z-index: 200;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 22px 52px;
+            background: rgba(8,8,8,0.82);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border-bottom: 1px solid rgba(200,200,200,0.07);
+            transition: padding 0.3s;
+        }
+
+        .nav-logo {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 20px;
+            letter-spacing: 6px;
+            background: linear-gradient(135deg, #fff 0%, #C8C8C8 45%, #888 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-decoration: none;
+        }
+
+        .nav-links {
+            display: flex;
+            align-items: center;
+            gap: 40px;
+            list-style: none;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: var(--silver-dark);
+            font-size: 10px;
+            font-weight: 500;
+            letter-spacing: 3.5px;
+            text-transform: uppercase;
+            transition: color 0.2s;
+        }
+
+        .nav-links a:hover { color: var(--white); }
+
+        .nav-book {
+            padding: 10px 26px;
+            border: 1px solid rgba(200,200,200,0.25);
+            color: var(--silver) !important;
+            transition: border-color 0.2s, color 0.2s, background 0.2s !important;
+        }
+
+        .nav-book:hover {
+            background: var(--white) !important;
+            border-color: var(--white) !important;
+            color: var(--black) !important;
+        }
+
+        /* ─── HERO ─── */
+        #hero {
+            position: relative;
+            height: 100vh;
+            min-height: 700px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        /* Spotlight cone from top */
+        #hero::before {
+            content: '';
+            position: absolute;
+            top: -10%;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 900px;
+            height: 110vh;
+            background: conic-gradient(
+                from 175deg at 50% 0%,
+                transparent 0deg,
+                transparent 20deg,
+                rgba(210,210,210,0.055) 40deg,
+                rgba(230,230,230,0.10) 50deg,
+                rgba(210,210,210,0.055) 60deg,
+                transparent 80deg,
+                transparent 360deg
+            );
+            pointer-events: none;
+        }
+
+        /* Ambient floor bounce */
+        #hero::after {
+            content: '';
+            position: absolute;
+            bottom: 0; left: 0; right: 0;
+            height: 40%;
+            background: radial-gradient(ellipse 60% 50% at 50% 100%, rgba(140,140,140,0.06) 0%, transparent 70%);
+            pointer-events: none;
+        }
+
+        /* Grain texture */
+        .hero-grain {
+            position: absolute;
+            inset: 0;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='1'/%3E%3C/svg%3E");
+            opacity: 0.028;
+            pointer-events: none;
+        }
+
+        .hero-content {
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            animation: heroIn 1.2s cubic-bezier(0.16, 1, 0.3, 1) both;
+        }
+
+        @keyframes heroIn {
+            from { opacity: 0; transform: translateY(28px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+
+        /* ─── LOGO SVG ─── */
+        .logo-mark {
+            width: 100px;
+            height: 100px;
+            margin-bottom: 36px;
+            filter:
+                drop-shadow(0 0 40px rgba(200,200,200,0.18))
+                drop-shadow(0 12px 32px rgba(0,0,0,0.9));
+        }
+
+        /* ─── HERO TEXT ─── */
+        .hero-title {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: clamp(80px, 14vw, 180px);
+            line-height: 0.88;
+            letter-spacing: 10px;
+            text-align: center;
+            background: linear-gradient(
+                180deg,
+                #FFFFFF   0%,
+                #E4E4E4  20%,
+                #C0C0C0  45%,
+                #888888  70%,
+                #B0B0B0  85%,
+                #787878 100%
+            );
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            filter: drop-shadow(0 6px 24px rgba(180,180,180,0.12));
+        }
+
+        .hero-sub {
+            margin-top: 24px;
+            font-size: 10px;
+            letter-spacing: 7px;
+            text-transform: uppercase;
+            color: var(--silver-dark);
+            text-align: center;
+        }
+
+        .hero-cta {
+            margin-top: 52px;
+            display: flex;
+            gap: 14px;
+        }
+
+        .btn {
+            display: inline-block;
+            text-decoration: none;
+            font-family: 'Inter', sans-serif;
+            font-size: 10px;
+            font-weight: 700;
+            letter-spacing: 4px;
+            text-transform: uppercase;
+            padding: 16px 44px;
+            cursor: pointer;
+            border: none;
+            transition: all 0.22s;
+        }
+
+        .btn-white {
+            background: var(--white);
+            color: var(--black);
+        }
+
+        .btn-white:hover {
+            background: var(--silver-light);
+            transform: translateY(-2px);
+        }
+
+        .btn-ghost {
+            background: transparent;
+            color: var(--silver);
+            border: 1px solid rgba(200,200,200,0.22);
+        }
+
+        .btn-ghost:hover {
+            border-color: var(--silver);
+            color: var(--white);
+        }
+
+        /* Scroll indicator */
+        .scroll-hint {
+            position: absolute;
+            bottom: 36px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+            opacity: 0;
+            animation: fadeIn 0.6s 1.6s forwards;
+        }
+
+        @keyframes fadeIn { to { opacity: 1; } }
+
+        .scroll-hint span {
+            font-size: 8px;
+            letter-spacing: 5px;
+            text-transform: uppercase;
+            color: rgba(200,200,200,0.3);
+        }
+
+        .scroll-line {
+            width: 1px;
+            height: 52px;
+            background: linear-gradient(to bottom, rgba(200,200,200,0.4), transparent);
+            animation: pulse 1.8s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 0.8; transform: scaleY(1) translateY(0); }
+            50%       { opacity: 0.2; transform: scaleY(0.6) translateY(6px); }
+        }
+
+        /* ─── SECTION BASE ─── */
+        .section-inner {
+            max-width: 1180px;
+            margin: 0 auto;
+            padding: 120px 52px;
+        }
+
+        .section-eyebrow {
+            font-size: 8.5px;
+            letter-spacing: 6px;
+            text-transform: uppercase;
+            color: var(--silver-dark);
+            margin-bottom: 14px;
+        }
+
+        .section-heading {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: clamp(52px, 6vw, 88px);
+            letter-spacing: 3px;
+            line-height: 1;
+            background: linear-gradient(140deg, #fff 0%, #C0C0C0 55%, #888 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 64px;
+        }
+
+        .divider {
+            border: none;
+            border-top: 1px solid rgba(200,200,200,0.07);
+        }
+
+        /* ─── SERVICES ─── */
+        .services-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1px;
+            background: rgba(200,200,200,0.07);
+            border: 1px solid rgba(200,200,200,0.07);
+        }
+
+        .service-card {
+            background: var(--black);
+            padding: 44px 32px;
+            display: flex;
+            flex-direction: column;
+            transition: background 0.25s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .service-card::after {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(200,200,200,0.4), transparent);
+            transform: scaleX(0);
+            transition: transform 0.4s;
+        }
+
+        .service-card:hover { background: rgba(255,255,255,0.025); }
+        .service-card:hover::after { transform: scaleX(1); }
+
+        .service-num {
+            font-size: 9px;
+            letter-spacing: 3px;
+            color: var(--silver-dark);
+            margin-bottom: 28px;
+        }
+
+        .service-name {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 30px;
+            letter-spacing: 2px;
+            color: var(--white);
+            margin-bottom: 10px;
+        }
+
+        .service-desc {
+            font-size: 12.5px;
+            color: var(--silver-dark);
+            line-height: 1.65;
+            flex: 1;
+            margin-bottom: 28px;
+        }
+
+        .service-price {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 44px;
+            letter-spacing: 1px;
+            background: linear-gradient(135deg, #DCDCDC 0%, #909090 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        /* ─── GALLERY ─── */
+        .gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            grid-template-rows: 320px 220px;
+            gap: 4px;
+        }
+
+        .gallery-item {
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(200,200,200,0.06);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            transition: background 0.3s;
+            position: relative;
+        }
+
+        .gallery-item:first-child {
+            grid-row: span 2;
+        }
+
+        .gallery-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+            transition: transform 0.5s ease;
+        }
+
+        .gallery-item:hover img { transform: scale(1.04); }
+
+        .gallery-placeholder {
+            font-size: 8px;
+            letter-spacing: 5px;
+            text-transform: uppercase;
+            color: rgba(200,200,200,0.15);
+        }
+
+        .gallery-item:hover { background: rgba(255,255,255,0.05); }
+
+        /* ─── BOOKING ─── */
+        .booking-layout {
+            display: grid;
+            grid-template-columns: 1fr 1.4fr;
+            gap: 80px;
+            align-items: start;
+        }
+
+        .booking-info-label {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 18px;
+            letter-spacing: 4px;
+            color: var(--silver);
+            margin-bottom: 14px;
+        }
+
+        .booking-info-text {
+            font-size: 13.5px;
+            color: var(--silver-dark);
+            line-height: 1.75;
+            margin-bottom: 48px;
+        }
+
+        .contact-row {
+            display: flex;
+            align-items: baseline;
+            gap: 18px;
+            margin-bottom: 18px;
+            font-size: 13.5px;
+        }
+
+        .contact-tag {
+            font-size: 8px;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            color: var(--silver-dark);
+            width: 56px;
+            flex-shrink: 0;
+        }
+
+        .contact-val { color: var(--silver); }
+
+        /* Form */
+        .booking-form {
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 14px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 7px;
+        }
+
+        .form-group label {
+            font-size: 8.5px;
+            letter-spacing: 3.5px;
+            text-transform: uppercase;
+            color: var(--silver-dark);
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(200,200,200,0.13);
+            color: var(--white);
+            padding: 13px 15px;
+            font-size: 13.5px;
+            font-family: 'Inter', sans-serif;
+            outline: none;
+            transition: border-color 0.2s, background 0.2s;
+            -webkit-appearance: none;
+            appearance: none;
+            border-radius: 0;
+            width: 100%;
+        }
+
+        .form-group select {
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23686868' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 14px center;
+            padding-right: 40px;
+        }
+
+        .form-group select option { background: #111; }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            border-color: rgba(200,200,200,0.4);
+            background: rgba(255,255,255,0.05);
+        }
+
+        .form-group input::placeholder,
+        .form-group textarea::placeholder { color: rgba(200,200,200,0.2); }
+
+        .form-group textarea { resize: none; height: 80px; }
+
+        .form-submit {
+            background: var(--white);
+            color: var(--black);
+            padding: 17px 32px;
+            font-family: 'Inter', sans-serif;
+            font-size: 10px;
+            font-weight: 700;
+            letter-spacing: 4px;
+            text-transform: uppercase;
+            border: none;
+            cursor: pointer;
+            transition: all 0.22s;
+            margin-top: 6px;
+            width: 100%;
+        }
+
+        .form-submit:hover {
+            background: var(--silver-light);
+            transform: translateY(-2px);
+        }
+
+        /* ─── FOOTER ─── */
+        footer {
+            border-top: 1px solid rgba(200,200,200,0.07);
+            padding: 40px 52px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .footer-logo {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 16px;
+            letter-spacing: 7px;
+            background: linear-gradient(135deg, #fff 0%, #888 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .footer-copy {
+            font-size: 10px;
+            letter-spacing: 2px;
+            color: rgba(200,200,200,0.22);
+        }
+
+        /* ─── MOBILE ─── */
+        @media (max-width: 768px) {
+            nav { padding: 18px 24px; }
+            .nav-links { display: none; }
+            .section-inner { padding: 80px 24px; }
+
+            .gallery-grid {
+                grid-template-columns: 1fr 1fr;
+                grid-template-rows: 200px 200px 200px;
+            }
+            .gallery-item:first-child { grid-row: span 1; }
+
+            .booking-layout { grid-template-columns: 1fr; gap: 44px; }
+            .form-row { grid-template-columns: 1fr; }
+
+            footer { flex-direction: column; gap: 12px; padding: 32px 24px; text-align: center; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- ─────────── NAV ─────────── -->
+<nav>
+    <a href="#hero" class="nav-logo">Benny Blends</a>
+    <ul class="nav-links">
+        <li><a href="#services">Services</a></li>
+        <li><a href="#gallery">Gallery</a></li>
+        <li><a href="https://instagram.com/bennyyblendss" target="_blank" rel="noopener">Instagram</a></li>
+        <li><a href="#booking" class="nav-book">Book Now</a></li>
+    </ul>
+</nav>
+
+<!-- ─────────── HERO ─────────── -->
+<section id="hero">
+    <div class="hero-grain"></div>
+
+    <div class="hero-content">
+
+        <!-- Logo mark -->
+        <svg class="logo-mark" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+                <linearGradient id="chromeLG" x1="20%" y1="0%" x2="80%" y2="100%">
+                    <stop offset="0%"   stop-color="#FFFFFF"/>
+                    <stop offset="18%"  stop-color="#E8E8E8"/>
+                    <stop offset="38%"  stop-color="#C0C0C0"/>
+                    <stop offset="58%"  stop-color="#848484"/>
+                    <stop offset="78%"  stop-color="#ACACAC"/>
+                    <stop offset="100%" stop-color="#686868"/>
+                </linearGradient>
+                <radialGradient id="specular" cx="28%" cy="22%" r="44%">
+                    <stop offset="0%"   stop-color="#FFFFFF" stop-opacity="0.85"/>
+                    <stop offset="55%"  stop-color="#FFFFFF" stop-opacity="0.08"/>
+                    <stop offset="100%" stop-color="#FFFFFF" stop-opacity="0"/>
+                </radialGradient>
+                <linearGradient id="rimLight" x1="100%" y1="100%" x2="0%" y2="0%">
+                    <stop offset="0%"   stop-color="#FFFFFF" stop-opacity="0.3"/>
+                    <stop offset="100%" stop-color="#FFFFFF" stop-opacity="0"/>
+                </linearGradient>
+                <filter id="logoShadow" x="-25%" y="-25%" width="150%" height="150%">
+                    <feDropShadow dx="0" dy="6" stdDeviation="8" flood-color="#000" flood-opacity="0.9"/>
+                    <feDropShadow dx="0" dy="0" stdDeviation="16" flood-color="#AAAAAA" flood-opacity="0.12"/>
+                </filter>
+            </defs>
+
+            <!-- Outer bezel ring -->
+            <circle cx="50" cy="50" r="48" fill="none" stroke="url(#chromeLG)" stroke-width="1.2" opacity="0.5"/>
+
+            <!-- Main disc -->
+            <circle cx="50" cy="50" r="46" fill="#0C0C0C" filter="url(#logoShadow)"/>
+
+            <!-- Inner ring -->
+            <circle cx="50" cy="50" r="40" fill="none" stroke="url(#chromeLG)" stroke-width="0.6" opacity="0.25"/>
+
+            <!-- BB monogram -->
+            <text
+                x="50" y="64"
+                font-family="'Bebas Neue', 'Arial Black', sans-serif"
+                font-size="44"
+                text-anchor="middle"
+                fill="url(#chromeLG)"
+                letter-spacing="-1">BB</text>
+
+            <!-- Specular highlight on letters -->
+            <text
+                x="50" y="64"
+                font-family="'Bebas Neue', 'Arial Black', sans-serif"
+                font-size="44"
+                text-anchor="middle"
+                fill="url(#specular)"
+                letter-spacing="-1">BB</text>
+
+            <!-- Rim light bottom-right -->
+            <circle cx="50" cy="50" r="46" fill="none" stroke="url(#rimLight)" stroke-width="2" opacity="0.4"/>
+
+            <!-- Top-left lens flare -->
+            <ellipse cx="26" cy="20" rx="10" ry="4" fill="white" opacity="0.07" transform="rotate(-35 26 20)"/>
+        </svg>
+
+        <h1 class="hero-title">BENNY<br>BLENDS</h1>
+        <p class="hero-sub">Precision Cuts &nbsp;&bull;&nbsp; Clean Fades &nbsp;&bull;&nbsp; Sharp Lines</p>
+
+        <div class="hero-cta">
+            <a href="#booking" class="btn btn-white">Book Now</a>
+            <a href="#services" class="btn btn-ghost">Services</a>
+        </div>
+    </div>
+
+    <div class="scroll-hint">
+        <div class="scroll-line"></div>
+        <span>Scroll</span>
+    </div>
+</section>
+
+<hr class="divider">
+
+<!-- ─────────── SERVICES ─────────── -->
+<div id="services">
+    <div class="section-inner">
+        <p class="section-eyebrow">What We Do</p>
+        <h2 class="section-heading">Services</h2>
+        <div class="services-grid">
+            <div class="service-card">
+                <span class="service-num">01</span>
+                <div class="service-name">Fresh Cut</div>
+                <div class="service-desc">Clean fade, sharp lines. Exactly how you want it — every time.</div>
+                <div class="service-price">$35</div>
+            </div>
+            <div class="service-card">
+                <span class="service-num">02</span>
+                <div class="service-name">Lineup</div>
+                <div class="service-desc">Crisp edges, clean perimeter, razor-sharp finish.</div>
+                <div class="service-price">$15</div>
+            </div>
+            <div class="service-card">
+                <span class="service-num">03</span>
+                <div class="service-name">Beard Trim</div>
+                <div class="service-desc">Shaped, defined, and detailed to perfection.</div>
+                <div class="service-price">$20</div>
+            </div>
+            <div class="service-card">
+                <span class="service-num">04</span>
+                <div class="service-name">Cut + Beard</div>
+                <div class="service-desc">Full service. Cut and beard handled in one clean session.</div>
+                <div class="service-price">$50</div>
+            </div>
+            <div class="service-card">
+                <span class="service-num">05</span>
+                <div class="service-name">Kids Cut</div>
+                <div class="service-desc">Clean cuts for the young ones. 12 and under.</div>
+                <div class="service-price">$25</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<hr class="divider">
+
+<!-- ─────────── GALLERY ─────────── -->
+<div id="gallery">
+    <div class="section-inner">
+        <p class="section-eyebrow">The Work</p>
+        <h2 class="section-heading">Gallery</h2>
+        <div class="gallery-grid">
+            <div class="gallery-item"><span class="gallery-placeholder">Photo Coming</span></div>
+            <div class="gallery-item"><span class="gallery-placeholder">Photo Coming</span></div>
+            <div class="gallery-item"><span class="gallery-placeholder">Photo Coming</span></div>
+            <div class="gallery-item"><span class="gallery-placeholder">Photo Coming</span></div>
+            <div class="gallery-item"><span class="gallery-placeholder">Photo Coming</span></div>
+        </div>
+    </div>
+</div>
+
+<hr class="divider">
+
+<!-- ─────────── BOOKING ─────────── -->
+<div id="booking">
+    <div class="section-inner">
+        <p class="section-eyebrow">Get In The Chair</p>
+        <h2 class="section-heading">Book</h2>
+        <div class="booking-layout">
+
+            <div class="booking-info">
+                <p class="booking-info-label">Book Your Spot</p>
+                <p class="booking-info-text">
+                    Fill out the form and we'll confirm your appointment.
+                    Walk-ins are always welcome when the chair's open.
+                </p>
+                <div class="contact-row">
+                    <span class="contact-tag">Phone</span>
+                    <span class="contact-val">(343) 262-4264</span>
+                </div>
+                <div class="contact-row">
+                    <span class="contact-tag">Email</span>
+                    <span class="contact-val">fxxrsiii@gmail.com</span>
+                </div>
+                <div class="contact-row">
+                    <span class="contact-tag">Hours</span>
+                    <span class="contact-val">Mon – Sat &nbsp; 10am – 8pm</span>
+                </div>
+                <div class="contact-row">
+                    <span class="contact-tag">Sunday</span>
+                    <span class="contact-val">Closed</span>
+                </div>
+                <div class="contact-row">
+                    <span class="contact-tag">Insta</span>
+                    <span class="contact-val"><a href="https://instagram.com/bennyyblendss" target="_blank" rel="noopener" style="color:inherit;text-decoration:none;border-bottom:1px solid rgba(200,200,200,0.3);">@bennyyblendss</a></span>
+                </div>
+            </div>
+
+            <form
+                class="booking-form"
+                action="https://formsubmit.co/fxxrsiii@gmail.com"
+                method="POST">
+
+                <!-- FormSubmit config -->
+                <input type="hidden" name="_subject" value="New Booking — Benny Blends">
+                <input type="hidden" name="_captcha" value="false">
+                <input type="hidden" name="_template" value="table">
+                <input type="hidden" name="_autoresponse" value="Your appointment request has been received! We'll confirm your booking shortly. — Benny Blends">
+                <input type="text" name="_honey" style="display:none" tabindex="-1" autocomplete="off">
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="fname">First Name</label>
+                        <input id="fname" type="text" name="first_name" required placeholder="First">
+                    </div>
+                    <div class="form-group">
+                        <label for="lname">Last Name</label>
+                        <input id="lname" type="text" name="last_name" required placeholder="Last">
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="phone">Phone</label>
+                        <input id="phone" type="tel" name="phone" required placeholder="(343) 000-0000">
+                    </div>
+                    <div class="form-group">
+                        <label for="email">Email</label>
+                        <input id="email" type="email" name="email" required placeholder="you@email.com">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="service">Service</label>
+                    <select id="service" name="service" required>
+                        <option value="" disabled selected>Select a service</option>
+                        <option>Fresh Cut — $35</option>
+                        <option>Lineup — $15</option>
+                        <option>Beard Trim — $20</option>
+                        <option>Cut + Beard — $50</option>
+                        <option>Kids Cut — $25</option>
+                    </select>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="date">Preferred Date</label>
+                        <input id="date" type="date" name="date" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="time">Preferred Time</label>
+                        <select id="time" name="time" required>
+                            <option value="" disabled selected>Select a time</option>
+                            <option>10:00 AM</option>
+                            <option>11:00 AM</option>
+                            <option>12:00 PM</option>
+                            <option>1:00 PM</option>
+                            <option>2:00 PM</option>
+                            <option>3:00 PM</option>
+                            <option>4:00 PM</option>
+                            <option>5:00 PM</option>
+                            <option>6:00 PM</option>
+                            <option>7:00 PM</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="notes">Notes (optional)</label>
+                    <textarea id="notes" name="notes" placeholder="Anything specific you want?"></textarea>
+                </div>
+
+                <button type="submit" class="form-submit">Request Appointment &rarr;</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- ─────────── FOOTER ─────────── -->
+<footer>
+    <div class="footer-logo">Benny Blends</div>
+    <a href="https://instagram.com/bennyyblendss" target="_blank" rel="noopener" class="footer-copy" style="text-decoration:none;">@bennyyblendss</a>
+    <div class="footer-copy">&copy; 2026 Benny Blends</div>
+</footer>
+
+</body>
+</html>
