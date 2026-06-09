@@ -28,6 +28,35 @@
             overflow-x: hidden;
         }
 
+        /* ─── CUSTOM CURSOR ─── */
+        .cursor-dot, .cursor-ring {
+            position: fixed;
+            top: 0; left: 0;
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 9999;
+            transform: translate(-50%, -50%);
+            will-change: transform;
+        }
+        .cursor-dot {
+            width: 6px; height: 6px;
+            background: var(--silver-light);
+        }
+        .cursor-ring {
+            width: 34px; height: 34px;
+            border: 1px solid rgba(200,200,200,0.5);
+            transition: width 0.25s ease, height 0.25s ease,
+                        background 0.25s ease, border-color 0.25s ease;
+        }
+        .cursor-ring.is-hover {
+            width: 58px; height: 58px;
+            background: rgba(200,200,200,0.07);
+            border-color: rgba(255,255,255,0.8);
+        }
+        @media (hover: none), (pointer: coarse) {
+            .cursor-dot, .cursor-ring { display: none; }
+        }
+
         /* ─── NAV ─── */
         nav {
             position: fixed;
@@ -41,8 +70,10 @@
             backdrop-filter: blur(16px);
             -webkit-backdrop-filter: blur(16px);
             border-bottom: 1px solid rgba(200,200,200,0.07);
-            transition: padding 0.3s;
+            transition: transform 0.45s cubic-bezier(0.16,1,0.3,1), padding 0.3s;
         }
+
+        nav.nav--hidden { transform: translateY(-100%); }
 
         .nav-logo {
             font-family: 'Bebas Neue', sans-serif;
@@ -86,6 +117,67 @@
             border-color: var(--white) !important;
             color: var(--black) !important;
         }
+
+        /* ─── HAMBURGER ─── */
+        .nav-toggle {
+            display: none;
+            flex-direction: column;
+            justify-content: center;
+            gap: 6px;
+            width: 30px;
+            height: 30px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            z-index: 320;
+        }
+        .nav-toggle span {
+            display: block;
+            width: 26px;
+            height: 1.5px;
+            background: var(--silver-light);
+            transition: transform 0.35s cubic-bezier(0.16,1,0.3,1), opacity 0.25s;
+        }
+        body.menu-open .nav-toggle span:nth-child(1) { transform: translateY(7.5px) rotate(45deg); }
+        body.menu-open .nav-toggle span:nth-child(2) { opacity: 0; }
+        body.menu-open .nav-toggle span:nth-child(3) { transform: translateY(-7.5px) rotate(-45deg); }
+
+        /* ─── MOBILE MENU OVERLAY ─── */
+        .mobile-menu {
+            position: fixed;
+            inset: 0;
+            z-index: 300;
+            background: rgba(8,8,8,0.97);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 38px;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.4s ease, visibility 0.4s ease;
+        }
+        body.menu-open .mobile-menu { opacity: 1; visibility: visible; }
+
+        .mobile-menu a {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 38px;
+            letter-spacing: 5px;
+            text-transform: uppercase;
+            text-decoration: none;
+            color: var(--silver);
+            opacity: 0;
+            transform: translateY(24px);
+            transition: opacity 0.5s ease, transform 0.5s cubic-bezier(0.16,1,0.3,1), color 0.2s;
+        }
+        .mobile-menu a:hover { color: var(--white); }
+        body.menu-open .mobile-menu a { opacity: 1; transform: translateY(0); }
+        body.menu-open .mobile-menu a:nth-child(1) { transition-delay: 0.12s; }
+        body.menu-open .mobile-menu a:nth-child(2) { transition-delay: 0.19s; }
+        body.menu-open .mobile-menu a:nth-child(3) { transition-delay: 0.26s; }
+        body.menu-open .mobile-menu a:nth-child(4) { transition-delay: 0.33s; }
 
         /* ─── HERO ─── */
         #hero {
@@ -145,12 +237,22 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            animation: heroIn 1.2s cubic-bezier(0.16, 1, 0.3, 1) both;
         }
 
+        /* Staggered hero entrance */
+        .hero-anim {
+            opacity: 0;
+            transform: translateY(34px);
+            animation: heroIn 1s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+        .hero-anim.d1 { animation-delay: 0.15s; }
+        .hero-anim.d2 { animation-delay: 0.45s; }
+        .hero-anim.d3 { animation-delay: 0.70s; }
+        .hero-anim.d4 { animation-delay: 0.90s; }
+        .hero-anim.d5 { animation-delay: 1.10s; }
+
         @keyframes heroIn {
-            from { opacity: 0; transform: translateY(28px); }
-            to   { opacity: 1; transform: translateY(0); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
         /* ─── LOGO SVG ─── */
@@ -235,39 +337,37 @@
             color: var(--white);
         }
 
-        /* Scroll indicator */
-        .scroll-hint {
-            position: absolute;
-            bottom: 36px;
-            left: 50%;
-            transform: translateX(-50%);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 10px;
-            opacity: 0;
-            animation: fadeIn 0.6s 1.6s forwards;
+        /* ─── MARQUEE ─── */
+        .marquee {
+            overflow: hidden;
+            white-space: nowrap;
+            border-top: 1px solid rgba(200,200,200,0.07);
+            border-bottom: 1px solid rgba(200,200,200,0.07);
+            padding: 22px 0;
+            background: linear-gradient(180deg, rgba(255,255,255,0.015), transparent);
         }
-
-        @keyframes fadeIn { to { opacity: 1; } }
-
-        .scroll-hint span {
-            font-size: 8px;
+        .marquee-track {
+            display: inline-flex;
+            align-items: center;
+            animation: marquee 32s linear infinite;
+        }
+        .marquee:hover .marquee-track { animation-play-state: paused; }
+        .marquee-track span {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 26px;
             letter-spacing: 5px;
             text-transform: uppercase;
-            color: rgba(200,200,200,0.3);
+            color: var(--silver-dark);
+            padding: 0 28px;
         }
-
-        .scroll-line {
-            width: 1px;
-            height: 52px;
-            background: linear-gradient(to bottom, rgba(200,200,200,0.4), transparent);
-            animation: pulse 1.8s ease-in-out infinite;
+        .marquee-track span::after {
+            content: '✦';
+            margin-left: 56px;
+            color: rgba(200,200,200,0.25);
         }
-
-        @keyframes pulse {
-            0%, 100% { opacity: 0.8; transform: scaleY(1) translateY(0); }
-            50%       { opacity: 0.2; transform: scaleY(0.6) translateY(6px); }
+        @keyframes marquee {
+            from { transform: translateX(0); }
+            to   { transform: translateX(-50%); }
         }
 
         /* ─── SECTION BASE ─── */
@@ -302,6 +402,24 @@
             border-top: 1px solid rgba(200,200,200,0.07);
         }
 
+        /* ─── SCROLL REVEAL ─── */
+        .reveal {
+            opacity: 0;
+            transform: translateY(40px);
+            transition: opacity 0.9s cubic-bezier(0.16,1,0.3,1),
+                        transform 0.9s cubic-bezier(0.16,1,0.3,1);
+        }
+        .reveal.in-view { opacity: 1; transform: translateY(0); }
+
+        /* staggered children */
+        .stagger > * {
+            opacity: 0;
+            transform: translateY(40px);
+            transition: opacity 0.8s cubic-bezier(0.16,1,0.3,1),
+                        transform 0.8s cubic-bezier(0.16,1,0.3,1);
+        }
+        .stagger.in-view > * { opacity: 1; transform: translateY(0); }
+
         /* ─── SERVICES ─── */
         .services-grid {
             display: grid;
@@ -316,7 +434,8 @@
             padding: 44px 32px;
             display: flex;
             flex-direction: column;
-            transition: background 0.25s;
+            transition: background 0.25s, opacity 0.8s cubic-bezier(0.16,1,0.3,1),
+                        transform 0.8s cubic-bezier(0.16,1,0.3,1);
             position: relative;
             overflow: hidden;
         }
@@ -367,20 +486,44 @@
             background-clip: text;
         }
 
-        /* ─── GALLERY ─── */
-        .gallery-grid {
+        /* ─── GALLERY (full-bleed mosaic) ─── */
+        .gallery-head {
+            max-width: 1180px;
+            margin: 0 auto;
+            padding: 120px 52px 48px;
+        }
+        .gallery-head .section-heading { margin-bottom: 0; }
+
+        .gallery-mosaic {
             display: grid;
+            width: 100%;
             grid-template-columns: repeat(4, 1fr);
-            gap: 4px;
+            grid-template-rows: repeat(4, 23vw);
+            grid-template-areas:
+                "a a b c"
+                "a a d c"
+                "e f f g"
+                "e h i g";
+            gap: 0;
         }
 
+        .gallery-mosaic .gallery-item:nth-child(1) { grid-area: a; }
+        .gallery-mosaic .gallery-item:nth-child(2) { grid-area: b; }
+        .gallery-mosaic .gallery-item:nth-child(3) { grid-area: c; }
+        .gallery-mosaic .gallery-item:nth-child(4) { grid-area: d; }
+        .gallery-mosaic .gallery-item:nth-child(5) { grid-area: e; }
+        .gallery-mosaic .gallery-item:nth-child(6) { grid-area: f; }
+        .gallery-mosaic .gallery-item:nth-child(7) { grid-area: g; }
+        .gallery-mosaic .gallery-item:nth-child(8) { grid-area: h; }
+        .gallery-mosaic .gallery-item:nth-child(9) { grid-area: i; }
+
         .gallery-item {
-            background: rgba(255,255,255,0.03);
-            border: 1px solid rgba(200,200,200,0.06);
+            background: #050505;
             overflow: hidden;
-            transition: transform 0.3s, box-shadow 0.3s;
+            transition: box-shadow 0.4s ease,
+                        opacity 0.9s cubic-bezier(0.16,1,0.3,1),
+                        transform 0.9s cubic-bezier(0.16,1,0.3,1);
             position: relative;
-            aspect-ratio: 9 / 14;
             cursor: pointer;
         }
 
@@ -389,27 +532,28 @@
             height: 100%;
             object-fit: cover;
             display: block;
-            transition: transform 0.5s ease;
+            transition: transform 0.6s cubic-bezier(0.16,1,0.3,1), filter 0.5s ease;
+            filter: saturate(1.02);
         }
 
         .gallery-item::after {
             content: '';
             position: absolute;
             inset: 0;
-            background: linear-gradient(180deg, transparent 55%, rgba(0,0,0,0.55) 100%);
+            background: linear-gradient(180deg, transparent 60%, rgba(0,0,0,0.45) 100%);
             pointer-events: none;
-            opacity: 0.7;
-            transition: opacity 0.3s;
+            opacity: 0.55;
+            transition: opacity 0.4s;
         }
 
         .gallery-item:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 20px 50px rgba(0,0,0,0.6), 0 0 0 1px rgba(200,200,200,0.25);
             z-index: 2;
+            box-shadow: inset 0 0 0 1px rgba(255,255,255,0.22),
+                        inset 0 0 60px rgba(0,0,0,0.5);
         }
 
-        .gallery-item:hover video { transform: scale(1.05); }
-        .gallery-item:hover::after { opacity: 0.3; }
+        .gallery-item:hover video { transform: scale(1.07); filter: saturate(1.12); }
+        .gallery-item:hover::after { opacity: 0.15; }
 
         /* ─── BOOKING ─── */
         .booking-layout {
@@ -567,10 +711,22 @@
         @media (max-width: 768px) {
             nav { padding: 18px 24px; }
             .nav-links { display: none; }
+            .nav-toggle { display: flex; }
             .section-inner { padding: 80px 24px; }
 
-            .gallery-grid {
+            .marquee-track span { font-size: 20px; }
+
+            .gallery-head { padding: 80px 24px 36px; }
+            .gallery-mosaic {
                 grid-template-columns: 1fr 1fr;
+                grid-template-rows: none;
+                grid-template-areas: none;
+                grid-auto-rows: 46vw;
+            }
+            .gallery-mosaic .gallery-item { grid-area: auto !important; }
+            .gallery-mosaic .gallery-item:nth-child(1) {
+                grid-column: span 2;
+                grid-row: span 2;
             }
 
             .booking-layout { grid-template-columns: 1fr; gap: 44px; }
@@ -578,20 +734,43 @@
 
             footer { flex-direction: column; gap: 12px; padding: 32px 24px; text-align: center; }
         }
+
+        /* Respect reduced motion */
+        @media (prefers-reduced-motion: reduce) {
+            .hero-anim, .reveal, .stagger > * { animation: none !important; opacity: 1 !important; transform: none !important; }
+            .marquee-track { animation: none; }
+            html { scroll-behavior: auto; }
+        }
     </style>
 </head>
 <body>
+
+<!-- ─────────── CUSTOM CURSOR ─────────── -->
+<div class="cursor-dot"></div>
+<div class="cursor-ring"></div>
 
 <!-- ─────────── NAV ─────────── -->
 <nav>
     <a href="#hero" class="nav-logo">Benny Blends</a>
     <ul class="nav-links">
         <li><a href="#services">Services</a></li>
+        <li><a href="about.html">About</a></li>
         <li><a href="#gallery">Gallery</a></li>
         <li><a href="https://instagram.com/bennyyblendss" target="_blank" rel="noopener">Instagram</a></li>
         <li><a href="#booking" class="nav-book">Book Now</a></li>
     </ul>
+    <button class="nav-toggle" aria-label="Menu">
+        <span></span><span></span><span></span>
+    </button>
 </nav>
+
+<!-- ─────────── MOBILE MENU ─────────── -->
+<div class="mobile-menu">
+    <a href="#services">Services</a>
+    <a href="about.html">About</a>
+    <a href="#gallery">Gallery</a>
+    <a href="#booking">Book Now</a>
+</div>
 
 <!-- ─────────── HERO ─────────── -->
 <section id="hero">
@@ -600,7 +779,7 @@
     <div class="hero-content">
 
         <!-- Logo mark -->
-        <svg class="logo-mark" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+        <svg class="logo-mark hero-anim d1" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
             <defs>
                 <linearGradient id="chromeLG" x1="20%" y1="0%" x2="80%" y2="100%">
                     <stop offset="0%"   stop-color="#FFFFFF"/>
@@ -628,8 +807,8 @@
             <!-- Outer bezel ring -->
             <circle cx="50" cy="50" r="48" fill="none" stroke="url(#chromeLG)" stroke-width="1.2" opacity="0.5"/>
 
-            <!-- Main disc -->
-            <circle cx="50" cy="50" r="46" fill="#0C0C0C" filter="url(#logoShadow)"/>
+            <!-- Main disc (transparent so the mark blends into the page) -->
+            <circle cx="50" cy="50" r="46" fill="none"/>
 
             <!-- Inner ring -->
             <circle cx="50" cy="50" r="40" fill="none" stroke="url(#chromeLG)" stroke-width="0.6" opacity="0.25"/>
@@ -659,29 +838,30 @@
             <ellipse cx="26" cy="20" rx="10" ry="4" fill="white" opacity="0.07" transform="rotate(-35 26 20)"/>
         </svg>
 
-        <h1 class="hero-title">BENNY<br>BLENDS</h1>
-        <p class="hero-sub">Precision Cuts &nbsp;&bull;&nbsp; Clean Fades &nbsp;&bull;&nbsp; Sharp Lines</p>
+        <h1 class="hero-title"><span class="hero-anim d2" style="display:block">BENNY</span><span class="hero-anim d3" style="display:block">BLENDS</span></h1>
+        <p class="hero-sub hero-anim d4">Precision Cuts &nbsp;&bull;&nbsp; Clean Fades &nbsp;&bull;&nbsp; Sharp Lines</p>
 
-        <div class="hero-cta">
+        <div class="hero-cta hero-anim d5">
             <a href="#booking" class="btn btn-white">Book Now</a>
             <a href="#services" class="btn btn-ghost">Services</a>
         </div>
     </div>
-
-    <div class="scroll-hint">
-        <div class="scroll-line"></div>
-        <span>Scroll</span>
-    </div>
 </section>
 
-<hr class="divider">
+<!-- ─────────── MARQUEE ─────────── -->
+<div class="marquee">
+    <div class="marquee-track">
+        <span>Benny Blends</span><span>Ottawa</span><span>Precision Cuts</span><span>Clean Fades</span><span>Sharp Lines</span><span>Est. 2018</span>
+        <span>Benny Blends</span><span>Ottawa</span><span>Precision Cuts</span><span>Clean Fades</span><span>Sharp Lines</span><span>Est. 2018</span>
+    </div>
+</div>
 
 <!-- ─────────── SERVICES ─────────── -->
 <div id="services">
     <div class="section-inner">
-        <p class="section-eyebrow">What We Do</p>
-        <h2 class="section-heading">Services</h2>
-        <div class="services-grid">
+        <p class="section-eyebrow reveal">What We Do</p>
+        <h2 class="section-heading reveal">Services</h2>
+        <div class="services-grid stagger">
             <div class="service-card">
                 <span class="service-num">01</span>
                 <div class="service-name">Fresh Cut</div>
@@ -716,37 +896,33 @@
     </div>
 </div>
 
-<hr class="divider">
-
 <!-- ─────────── GALLERY ─────────── -->
 <div id="gallery">
-    <div class="section-inner">
-        <p class="section-eyebrow">The Work</p>
-        <h2 class="section-heading">Gallery</h2>
-        <div class="gallery-grid">
-            <div class="gallery-item"><video src="media/cut-01.mp4" muted loop playsinline preload="metadata"></video></div>
-            <div class="gallery-item"><video src="media/cut-03.mp4" muted loop playsinline preload="metadata"></video></div>
-            <div class="gallery-item"><video src="media/cut-04.mp4" muted loop playsinline preload="metadata"></video></div>
-            <div class="gallery-item"><video src="media/cut-06.mp4" muted loop playsinline preload="metadata"></video></div>
-            <div class="gallery-item"><video src="media/cut-07.mp4" muted loop playsinline preload="metadata"></video></div>
-            <div class="gallery-item"><video src="media/cut-08.mp4" muted loop playsinline preload="metadata"></video></div>
-            <div class="gallery-item"><video src="media/cut-09.mp4" muted loop playsinline preload="metadata"></video></div>
-            <div class="gallery-item"><video src="media/cut-10.mp4" muted loop playsinline preload="metadata"></video></div>
-            <div class="gallery-item"><video src="media/cut-11.mp4" muted loop playsinline preload="metadata"></video></div>
-        </div>
+    <div class="gallery-head">
+        <p class="section-eyebrow reveal">The Work</p>
+        <h2 class="section-heading reveal">Gallery</h2>
+    </div>
+    <div class="gallery-mosaic stagger">
+        <div class="gallery-item"><video src="media/cut-01.mp4#t=0.001" muted loop playsinline preload="metadata"></video></div>
+        <div class="gallery-item"><video src="media/cut-03.mp4#t=0.001" muted loop playsinline preload="metadata"></video></div>
+        <div class="gallery-item"><video src="media/cut-04.mp4#t=0.001" muted loop playsinline preload="metadata"></video></div>
+        <div class="gallery-item"><video src="media/cut-06.mp4#t=0.001" muted loop playsinline preload="metadata"></video></div>
+        <div class="gallery-item"><video src="media/cut-07.mp4#t=0.001" muted loop playsinline preload="metadata"></video></div>
+        <div class="gallery-item"><video src="media/cut-08.mp4#t=0.001" muted loop playsinline preload="metadata"></video></div>
+        <div class="gallery-item"><video src="media/cut-09.mp4#t=0.001" muted loop playsinline preload="metadata"></video></div>
+        <div class="gallery-item"><video src="media/cut-10.mp4#t=0.001" muted loop playsinline preload="metadata"></video></div>
+        <div class="gallery-item"><video src="media/cut-11.mp4#t=0.001" muted loop playsinline preload="metadata"></video></div>
     </div>
 </div>
-
-<hr class="divider">
 
 <!-- ─────────── BOOKING ─────────── -->
 <div id="booking">
     <div class="section-inner">
-        <p class="section-eyebrow">Get In The Chair</p>
-        <h2 class="section-heading">Book</h2>
+        <p class="section-eyebrow reveal">Get In The Chair</p>
+        <h2 class="section-heading reveal">Book</h2>
         <div class="booking-layout">
 
-            <div class="booking-info">
+            <div class="booking-info reveal">
                 <p class="booking-info-label">Book Your Spot</p>
                 <p class="booking-info-text">
                     Fill out the form and we'll confirm your appointment.
@@ -758,7 +934,7 @@
                 </div>
                 <div class="contact-row">
                     <span class="contact-tag">Email</span>
-                    <span class="contact-val">fxxrsiii@gmail.com</span>
+                    <span class="contact-val">farsijaniben@gmail.com</span>
                 </div>
                 <div class="contact-row">
                     <span class="contact-tag">Hours</span>
@@ -775,8 +951,8 @@
             </div>
 
             <form
-                class="booking-form"
-                action="https://formsubmit.co/fxxrsiii@gmail.com"
+                class="booking-form reveal"
+                action="https://formsubmit.co/farsijaniben@gmail.com"
                 method="POST">
 
                 <!-- FormSubmit config -->
@@ -862,28 +1038,86 @@
 </footer>
 
 <script>
-    // Hover-to-play on desktop; tap-to-toggle on touch devices
-    const items = document.querySelectorAll('.gallery-item');
     const isTouch = window.matchMedia('(hover: none)').matches;
 
-    items.forEach(item => {
-        const vid = item.querySelector('video');
-        if (!vid) return;
+    /* ─── CUSTOM CURSOR ─── */
+    if (!isTouch) {
+        const dot = document.querySelector('.cursor-dot');
+        const ring = document.querySelector('.cursor-ring');
+        let mouseX = window.innerWidth / 2, mouseY = window.innerHeight / 2;
+        let ringX = mouseX, ringY = mouseY;
 
-        if (isTouch) {
-            item.addEventListener('click', () => {
-                if (vid.paused) {
-                    items.forEach(o => { const v = o.querySelector('video'); if (v && v !== vid) v.pause(); });
-                    vid.play();
-                } else {
-                    vid.pause();
-                }
-            });
-        } else {
-            item.addEventListener('mouseenter', () => { vid.currentTime = 0; vid.play(); });
-            item.addEventListener('mouseleave', () => { vid.pause(); });
+        window.addEventListener('mousemove', e => {
+            mouseX = e.clientX; mouseY = e.clientY;
+            dot.style.transform = `translate(${mouseX}px, ${mouseY}px) translate(-50%, -50%)`;
+        });
+
+        function animateRing() {
+            ringX += (mouseX - ringX) * 0.18;
+            ringY += (mouseY - ringY) * 0.18;
+            ring.style.transform = `translate(${ringX}px, ${ringY}px) translate(-50%, -50%)`;
+            requestAnimationFrame(animateRing);
         }
+        animateRing();
+
+        const hoverTargets = document.querySelectorAll('a, button, .gallery-item, input, select, textarea');
+        hoverTargets.forEach(el => {
+            el.addEventListener('mouseenter', () => ring.classList.add('is-hover'));
+            el.addEventListener('mouseleave', () => ring.classList.remove('is-hover'));
+        });
+    }
+
+    /* ─── NAV HIDE / SHOW ON SCROLL ─── */
+    const nav = document.querySelector('nav');
+    let lastScroll = 0;
+    window.addEventListener('scroll', () => {
+        const y = window.scrollY;
+        if (y > lastScroll && y > 120) {
+            nav.classList.add('nav--hidden');
+        } else {
+            nav.classList.remove('nav--hidden');
+        }
+        lastScroll = y;
+    }, { passive: true });
+
+    /* ─── MOBILE MENU ─── */
+    const toggle = document.querySelector('.nav-toggle');
+    const mobileLinks = document.querySelectorAll('.mobile-menu a');
+    toggle.addEventListener('click', () => document.body.classList.toggle('menu-open'));
+    mobileLinks.forEach(l => l.addEventListener('click', () => document.body.classList.remove('menu-open')));
+
+    /* ─── SCROLL REVEALS ─── */
+    document.querySelectorAll('.stagger').forEach(group => {
+        Array.from(group.children).forEach((child, i) => {
+            child.style.transitionDelay = (i * 75) + 'ms';
+        });
     });
+
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('in-view');
+                observer.unobserve(entry.target);
+            }
+        });
+    }, { threshold: 0.15, rootMargin: '0px 0px -60px 0px' });
+
+    document.querySelectorAll('.reveal, .stagger').forEach(el => observer.observe(el));
+
+    /* ─── GALLERY: autoplay clips while they're on screen ─── */
+    const galleryVideos = document.querySelectorAll('.gallery-item video');
+    const playObserver = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            const vid = entry.target;
+            if (entry.isIntersecting) {
+                const p = vid.play();
+                if (p) p.catch(() => {});
+            } else {
+                vid.pause();
+            }
+        });
+    }, { threshold: 0.2 });
+    galleryVideos.forEach(vid => playObserver.observe(vid));
 </script>
 
 </body>

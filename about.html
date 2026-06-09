@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About — Benny Blends</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+        :root {
+            --black:  #080808;
+            --silver: #C8C8C8;
+            --silver-light: #E8E8E8;
+            --silver-mid: #A0A0A0;
+            --silver-dark: #686868;
+            --white: #FFFFFF;
+        }
+
+        html { scroll-behavior: smooth; }
+
+        body {
+            background: var(--black);
+            color: var(--white);
+            font-family: 'Inter', sans-serif;
+            overflow-x: hidden;
+            min-height: 100vh;
+        }
+
+        /* ─── CUSTOM CURSOR ─── */
+        .cursor-dot, .cursor-ring {
+            position: fixed;
+            top: 0; left: 0;
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 9999;
+            transform: translate(-50%, -50%);
+            will-change: transform;
+        }
+        .cursor-dot { width: 6px; height: 6px; background: var(--silver-light); }
+        .cursor-ring {
+            width: 34px; height: 34px;
+            border: 1px solid rgba(200,200,200,0.5);
+            transition: width 0.25s ease, height 0.25s ease, background 0.25s ease, border-color 0.25s ease;
+        }
+        .cursor-ring.is-hover {
+            width: 58px; height: 58px;
+            background: rgba(200,200,200,0.07);
+            border-color: rgba(255,255,255,0.8);
+        }
+        @media (hover: none), (pointer: coarse) {
+            .cursor-dot, .cursor-ring { display: none; }
+        }
+
+        /* ─── NAV ─── */
+        nav {
+            position: fixed;
+            inset: 0 0 auto 0;
+            z-index: 200;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 22px 52px;
+            background: rgba(8,8,8,0.82);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border-bottom: 1px solid rgba(200,200,200,0.07);
+            transition: transform 0.45s cubic-bezier(0.16,1,0.3,1);
+        }
+        nav.nav--hidden { transform: translateY(-100%); }
+
+        .nav-logo {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 20px;
+            letter-spacing: 6px;
+            background: linear-gradient(135deg, #fff 0%, #C8C8C8 45%, #888 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-decoration: none;
+        }
+
+        .nav-links {
+            display: flex;
+            align-items: center;
+            gap: 40px;
+            list-style: none;
+        }
+        .nav-links a {
+            text-decoration: none;
+            color: var(--silver-dark);
+            font-size: 10px;
+            font-weight: 500;
+            letter-spacing: 3.5px;
+            text-transform: uppercase;
+            transition: color 0.2s;
+        }
+        .nav-links a:hover { color: var(--white); }
+        .nav-book {
+            padding: 10px 26px;
+            border: 1px solid rgba(200,200,200,0.25);
+            color: var(--silver) !important;
+            transition: border-color 0.2s, color 0.2s, background 0.2s !important;
+        }
+        .nav-book:hover {
+            background: var(--white) !important;
+            border-color: var(--white) !important;
+            color: var(--black) !important;
+        }
+
+        /* ─── ABOUT HERO ─── */
+        .about-wrap {
+            position: relative;
+            max-width: 1080px;
+            margin: 0 auto;
+            padding: 200px 52px 120px;
+        }
+
+        /* soft ambient glow */
+        .about-wrap::before {
+            content: '';
+            position: absolute;
+            top: 8%;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 700px;
+            max-width: 90%;
+            height: 500px;
+            background: radial-gradient(ellipse at center, rgba(160,160,160,0.06) 0%, transparent 70%);
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        .about-eyebrow {
+            font-size: 9px;
+            letter-spacing: 6px;
+            text-transform: uppercase;
+            color: var(--silver-dark);
+            margin-bottom: 18px;
+        }
+
+        .about-title {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: clamp(64px, 11vw, 150px);
+            line-height: 0.9;
+            letter-spacing: 4px;
+            background: linear-gradient(180deg, #FFFFFF 0%, #C0C0C0 45%, #888888 70%, #B0B0B0 88%, #787878 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            filter: drop-shadow(0 6px 24px rgba(180,180,180,0.12));
+            margin-bottom: 70px;
+        }
+
+        .about-layout {
+            display: grid;
+            grid-template-columns: 0.75fr 1.25fr;
+            gap: 70px;
+            align-items: start;
+        }
+
+        .about-bignum {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: clamp(150px, 20vw, 280px);
+            line-height: 0.8;
+            letter-spacing: -2px;
+            background: linear-gradient(160deg, #fff 0%, #C0C0C0 40%, #6a6a6a 75%, #B0B0B0 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            filter: drop-shadow(0 10px 40px rgba(180,180,180,0.1));
+            position: sticky;
+            top: 160px;
+        }
+        .about-bignum small {
+            display: block;
+            font-family: 'Inter', sans-serif;
+            font-size: 9px;
+            letter-spacing: 4px;
+            text-transform: uppercase;
+            color: var(--silver-dark);
+            margin-top: 10px;
+            -webkit-text-fill-color: var(--silver-dark);
+        }
+
+        .about-text p {
+            font-size: 15.5px;
+            line-height: 2;
+            color: var(--silver-mid);
+            margin-bottom: 26px;
+        }
+        .about-text p strong { color: var(--white); font-weight: 600; }
+
+        .about-sign {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 24px;
+            letter-spacing: 4px;
+            color: var(--silver);
+            margin-top: 10px;
+        }
+
+        .about-cta {
+            margin-top: 56px;
+            display: flex;
+            gap: 14px;
+            flex-wrap: wrap;
+        }
+        .btn {
+            display: inline-block;
+            text-decoration: none;
+            font-family: 'Inter', sans-serif;
+            font-size: 10px;
+            font-weight: 700;
+            letter-spacing: 4px;
+            text-transform: uppercase;
+            padding: 16px 44px;
+            cursor: pointer;
+            border: none;
+            transition: all 0.22s;
+        }
+        .btn-white { background: var(--white); color: var(--black); }
+        .btn-white:hover { background: var(--silver-light); transform: translateY(-2px); }
+        .btn-ghost { background: transparent; color: var(--silver); border: 1px solid rgba(200,200,200,0.22); }
+        .btn-ghost:hover { border-color: var(--silver); color: var(--white); }
+
+        /* ─── STATS BAND ─── */
+        .stats {
+            border-top: 1px solid rgba(200,200,200,0.07);
+            border-bottom: 1px solid rgba(200,200,200,0.07);
+        }
+        .stats-grid {
+            max-width: 1080px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+        }
+        .stat {
+            padding: 64px 28px;
+            text-align: center;
+            border-right: 1px solid rgba(200,200,200,0.07);
+        }
+        .stat:last-child { border-right: none; }
+        .stat-num {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: clamp(46px, 6vw, 76px);
+            line-height: 1;
+            letter-spacing: 2px;
+            background: linear-gradient(140deg, #fff 0%, #C0C0C0 55%, #777 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .stat-label {
+            margin-top: 14px;
+            font-size: 8.5px;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            color: var(--silver-dark);
+            line-height: 1.6;
+        }
+
+        /* ─── REVEAL ─── */
+        .reveal {
+            opacity: 0;
+            transform: translateY(36px);
+            transition: opacity 0.9s cubic-bezier(0.16,1,0.3,1), transform 0.9s cubic-bezier(0.16,1,0.3,1);
+        }
+        .reveal.in-view { opacity: 1; transform: translateY(0); }
+        .reveal.d1 { transition-delay: 0.08s; }
+        .reveal.d2 { transition-delay: 0.16s; }
+        .reveal.d3 { transition-delay: 0.24s; }
+        .reveal.d4 { transition-delay: 0.32s; }
+
+        /* ─── FOOTER ─── */
+        footer {
+            border-top: 1px solid rgba(200,200,200,0.07);
+            padding: 40px 52px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .footer-logo {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 16px;
+            letter-spacing: 7px;
+            background: linear-gradient(135deg, #fff 0%, #888 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .footer-copy {
+            font-size: 10px;
+            letter-spacing: 2px;
+            color: rgba(200,200,200,0.22);
+            text-decoration: none;
+        }
+
+        @media (max-width: 768px) {
+            nav { padding: 18px 24px; }
+            .nav-links a:not(.nav-book) { display: none; }
+            .about-wrap { padding: 150px 24px 90px; }
+            .about-layout { grid-template-columns: 1fr; gap: 10px; text-align: center; }
+            .about-bignum { position: static; }
+            .about-cta { justify-content: center; }
+            .stats-grid { grid-template-columns: 1fr; }
+            .stat { padding: 40px 20px; border-right: none; border-bottom: 1px solid rgba(200,200,200,0.07); }
+            .stat:last-child { border-bottom: none; }
+            footer { flex-direction: column; gap: 12px; padding: 32px 24px; text-align: center; }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            .reveal { opacity: 1 !important; transform: none !important; }
+            html { scroll-behavior: auto; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="cursor-dot"></div>
+<div class="cursor-ring"></div>
+
+<!-- ─────────── NAV ─────────── -->
+<nav>
+    <a href="index.html" class="nav-logo">Benny Blends</a>
+    <ul class="nav-links">
+        <li><a href="index.html#services">Services</a></li>
+        <li><a href="index.html#gallery">Gallery</a></li>
+        <li><a href="https://instagram.com/bennyyblendss" target="_blank" rel="noopener">Instagram</a></li>
+        <li><a href="index.html#booking" class="nav-book">Book Now</a></li>
+    </ul>
+</nav>
+
+<!-- ─────────── ABOUT ─────────── -->
+<div class="about-wrap">
+    <p class="about-eyebrow reveal">The Story</p>
+    <h1 class="about-title reveal d1">Meet Benny</h1>
+
+    <div class="about-layout">
+        <div class="about-bignum reveal d1">13<small>Where it really started</small></div>
+        <div class="about-text">
+            <p class="reveal d1">I got my first pair of clippers at <strong>12</strong>. By <strong>13</strong> I was cutting for real, practicing on myself, my three older brothers, my dad, and every friend who'd sit still long enough.</p>
+            <p class="reveal d2">Through high school I kept sharpening, kept learning, kept blending. When I got into <strong>Computer Science at uOttawa</strong> I had to slow it down for a minute and focus on the books, but I could never put the clippers down for long.</p>
+            <p class="reveal d3">Born and raised in <strong>Ottawa</strong> to Iranian and Polish refugees, hard work is kind of the whole story. Now I've found my rhythm, and honestly? I just love this. Every fade, every lineup, every person in the chair.</p>
+            <p class="about-sign reveal d4">— Benny</p>
+
+            <div class="about-cta reveal d4">
+                <a href="index.html#booking" class="btn btn-white">Book a Cut</a>
+                <a href="index.html#gallery" class="btn btn-ghost">See the Work</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ─────────── STATS BAND ─────────── -->
+<div class="stats">
+    <div class="stats-grid">
+        <div class="stat reveal">
+            <div class="stat-num">8+</div>
+            <div class="stat-label">Years on<br>the clippers</div>
+        </div>
+        <div class="stat reveal d1">
+            <div class="stat-num">OTT</div>
+            <div class="stat-label">Born & raised<br>in Ottawa</div>
+        </div>
+        <div class="stat reveal d2">
+            <div class="stat-num">CS</div>
+            <div class="stat-label">Balancing uOttawa<br>&amp; the barber game</div>
+        </div>
+    </div>
+</div>
+
+<!-- ─────────── FOOTER ─────────── -->
+<footer>
+    <div class="footer-logo">Benny Blends</div>
+    <a href="https://instagram.com/bennyyblendss" target="_blank" rel="noopener" class="footer-copy">@bennyyblendss</a>
+    <div class="footer-copy">&copy; 2026 Benny Blends</div>
+</footer>
+
+<script>
+    const isTouch = window.matchMedia('(hover: none)').matches;
+
+    /* ─── CUSTOM CURSOR ─── */
+    if (!isTouch) {
+        const dot = document.querySelector('.cursor-dot');
+        const ring = document.querySelector('.cursor-ring');
+        let mouseX = innerWidth / 2, mouseY = innerHeight / 2, ringX = mouseX, ringY = mouseY;
+        addEventListener('mousemove', e => {
+            mouseX = e.clientX; mouseY = e.clientY;
+            dot.style.transform = `translate(${mouseX}px, ${mouseY}px) translate(-50%, -50%)`;
+        });
+        (function loop() {
+            ringX += (mouseX - ringX) * 0.18;
+            ringY += (mouseY - ringY) * 0.18;
+            ring.style.transform = `translate(${ringX}px, ${ringY}px) translate(-50%, -50%)`;
+            requestAnimationFrame(loop);
+        })();
+        document.querySelectorAll('a, button').forEach(el => {
+            el.addEventListener('mouseenter', () => ring.classList.add('is-hover'));
+            el.addEventListener('mouseleave', () => ring.classList.remove('is-hover'));
+        });
+    }
+
+    /* ─── NAV HIDE / SHOW ─── */
+    const nav = document.querySelector('nav');
+    let lastScroll = 0;
+    addEventListener('scroll', () => {
+        const y = scrollY;
+        nav.classList.toggle('nav--hidden', y > lastScroll && y > 120);
+        lastScroll = y;
+    }, { passive: true });
+
+    /* ─── REVEALS ─── */
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) { entry.target.classList.add('in-view'); observer.unobserve(entry.target); }
+        });
+    }, { threshold: 0.15, rootMargin: '0px 0px -40px 0px' });
+    document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+</script>
+
+</body>
+</html>
