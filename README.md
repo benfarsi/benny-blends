@@ -1,6 +1,6 @@
 # Benny Blends
 
-Barbershop website — precision cuts, clean fades, sharp lines.
+Barbershop website. Precision cuts, clean fades, sharp lines.
 
 **Instagram:** [@bennyyblendss](https://instagram.com/bennyyblendss)
 
